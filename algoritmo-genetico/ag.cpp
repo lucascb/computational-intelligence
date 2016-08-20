@@ -38,10 +38,10 @@ bool mais_apto(ind a, ind b) {
 }
 
 /* Gera um individuo aleatorio */
-individuo gera_individuo(void) {
+ind gera_individuo(void) {
     int val, i, j;
     bool found;
-    individuo ind;
+    ind individuo;
     
     // Gera valores distintos para cada uma das oito letras
     for (i = 0; i < 10; i++) {
@@ -51,7 +51,7 @@ individuo gera_individuo(void) {
             // Verifica se val ja existe em v[0..i-1]
             found = false;
             for (j = 0; j < i; j++) {
-                if (ind.gene[j] == val) {
+                if (individuo.gene[j] == val) {
                     found = true;
                     break;
                 }
@@ -59,15 +59,15 @@ individuo gera_individuo(void) {
             // Se nao existir sai do laco e atribui val a letra
             if (!found) break;
         }
-        ind.gene[i] = val;
+        individuo.gene[i] = val;
     }
-    ind.fit = fitness(ind);
+    individuo.fit = fitness(individuo);
     
-    return ind;
+    return individuo;
 }
 
 /* Faz torneio de 3 e retorna o individuo mais apto da populacao */
-individuo torneio(ind pop[]) {    
+ind torneio(ind pop[]) {    
     int melhor_ind;
     // Seleciona 3 individuos aleatorios da populacao
     int i1 = rand() % PMAX;
@@ -141,81 +141,79 @@ int main(int argc, char *argv[]) {
     //*/
     
     srand(time(NULL));
-    for (int c = 0; c < 1; c++) {
-        // Gera 100 individuos aleatorios para a populacao inicial
-        for (i = 0; i < PMAX; i++) {
-            pop[i] = gera_individuo();
-            //* 
-            fit_pop += pop[i].fit;
-            if (pop[i].gene[4] == 0)      n_0++;
-            else if (pop[i].gene[4] == 1) n_1++;
-            if (pop[i].fit <= 100) {  
-                n_100++;
-                fit_100 += pop[i].fit;
-            }
-            if (i == 0 || pop[i].fit < melhor) melhor = pop[i].fit;
-            //*/
+	// Gera 100 individuos aleatorios para a populacao inicial
+    for (i = 0; i < PMAX; i++) {
+    	pop[i] = gera_individuo();
+       	//* 
+        fit_pop += pop[i].fit;
+        if (pop[i].gene[4] == 0)      n_0++;
+        else if (pop[i].gene[4] == 1) n_1++;
+        if (pop[i].fit <= 100) {  
+            n_100++;
+            fit_100 += pop[i].fit;
         }
-        
-        //* Testes
-        printf("Populacao inicial\n");
-        printf("Media: %.2f\n", fit_pop / (PMAX * 1.0));
-        printf("Nro de ind < 100: %d\n", n_100);
-        printf("Media dos ind < 100: %.2f\n", (n_100 == 0) ? 0 : (fit_100 / (n_100 * 1.0)));
-        printf("Nro de ind com M = 0: %d\n", n_0);
-        printf("Nro de ind com M = 1: %d\n", n_1);
-        printf("Melhor individuo: %d\n", melhor);
+        if (i == 0 || pop[i].fit < melhor) melhor = pop[i].fit;
         //*/
-        //printf("%.2f %d %.2f %d %d %d ", fit_pop / (PMAX * 1.0), n_100, (n_100 == 0) ? 0 : (fit_100 / (n_100 * 1.0)), n_0, n_1, melhor);
-        
-        // Seleciona PCROSS individuos aleatorios para o crossover
-        for (i = 0; i < PCROSS; i += 2) {
-            ind1        = torneio(pop);
-            ind2        = torneio(pop);
-            crossover(ind1, ind2, result);
-            filhos[i]   = result[0];
-            filhos[i+1] = result[1];
-        }
-        
-        // Seleciona um filho aleatorio e o mutaciona
-        i = rand() % PCROSS;
-        mutaciona(&filhos[i]);
-        
-        // Insere os filhos na populacao
-        for (i = 0; i < PMAX; i++)
-            ger[i] = pop[i];
-        for (i = PMAX; i < PMAX+PCROSS; i++)
-            ger[i] = filhos[i-PMAX];
-        
-        // Ordena os individuos e pega os PMAX melhores
-        std::sort(ger, ger+PMAX+PCROSS, mais_apto);
-        fit_pop = 0, n_0 = 0, n_1 = 0, n_100 = 0, fit_100 = 0; 
-        for (i = 0; i < PMAX; i++) {
-            pop[i] = ger[i];
-            //printf("%d\n", pop[i].fit);
-                    //* 
-            fit_pop += pop[i].fit;
-            if (pop[i].gene[4] == 0)      n_0++;
-            else if (pop[i].gene[4] == 1) n_1++;
-            if (pop[i].fit <= 100) {  
-                n_100++;
-                fit_100 += pop[i].fit;
-            }
-            if (i == 0 || pop[i].fit < melhor) melhor = pop[i].fit;
-            //*/
-        }
-        
-        //* Testes
-        printf("\nPopulacao gerada\n");
-        printf("Media: %.2f\n", fit_pop / (PMAX * 1.0));
-        printf("Nro de ind < 100: %d\n", n_100);
-        printf("Media dos ind < 100: %.2f\n", (n_100 == 0) ? 0 : (fit_100 / (n_100 * 1.0)));
-        printf("Nro de ind com M = 0: %d\n", n_0);
-        printf("Nro de ind com M = 1: %d\n", n_1);
-        printf("Melhor individuo: %d\n", melhor);
-        //*/
-        //printf("%.2f %d %.2f %d %d %d\n", fit_pop / (PMAX * 1.0), n_100, (n_100 == 0) ? 0 : (fit_100 / (n_100 * 1.0)), n_0, n_1, melhor);
     }
-    
+        
+    //* Testes
+    printf("Populacao inicial\n");
+    printf("Media: %.2f\n", fit_pop / (PMAX * 1.0));
+	printf("Nro de ind < 100: %d\n", n_100);
+    printf("Media dos ind < 100: %.2f\n", (n_100 == 0) ? 0 : (fit_100 / (n_100 * 1.0)));
+    printf("Nro de ind com M = 0: %d\n", n_0);
+    printf("Nro de ind com M = 1: %d\n", n_1);
+    printf("Melhor individuo: %d\n", melhor);
+    //*/
+    //printf("%.2f %d %.2f %d %d %d ", fit_pop / (PMAX * 1.0), n_100, (n_100 == 0) ? 0 : (fit_100 / (n_100 * 1.0)), n_0, n_1, melhor);
+        
+    // Seleciona PCROSS individuos aleatorios para o crossover
+    for (i = 0; i < PCROSS; i += 2) {
+        ind1        = torneio(pop);
+        ind2        = torneio(pop);
+        crossover(ind1, ind2, result);
+        filhos[i]   = result[0];
+        filhos[i+1] = result[1];
+    }
+        
+    // Seleciona um filho aleatorio e o mutaciona
+    i = rand() % PCROSS;
+    mutaciona(&filhos[i]);
+        
+    // Insere os filhos na populacao
+    for (i = 0; i < PMAX; i++)
+        ger[i] = pop[i];
+    for (i = PMAX; i < PMAX+PCROSS; i++)
+        ger[i] = filhos[i-PMAX];
+        
+    // Ordena os individuos e pega os PMAX melhores
+    std::sort(ger, ger+PMAX+PCROSS, mais_apto);
+    fit_pop = 0, n_0 = 0, n_1 = 0, n_100 = 0, fit_100 = 0; 
+    for (i = 0; i < PMAX; i++) {
+        pop[i] = ger[i];
+        //printf("%d\n", pop[i].fit);
+        //* 
+        fit_pop += pop[i].fit;
+        if (pop[i].gene[4] == 0)      n_0++;
+        else if (pop[i].gene[4] == 1) n_1++;
+        if (pop[i].fit <= 100) {  
+            n_100++;
+            fit_100 += pop[i].fit;
+        }
+        if (i == 0 || pop[i].fit < melhor) melhor = pop[i].fit;
+        //*/
+    }
+        
+    //* Testes
+    printf("\nPopulacao gerada\n");
+    printf("Media: %.2f\n", fit_pop / (PMAX * 1.0));
+    printf("Nro de ind < 100: %d\n", n_100);
+    printf("Media dos ind < 100: %.2f\n", (n_100 == 0) ? 0 : (fit_100 / (n_100 * 1.0)));
+    printf("Nro de ind com M = 0: %d\n", n_0);
+    printf("Nro de ind com M = 1: %d\n", n_1);
+    printf("Melhor individuo: %d\n", melhor);
+    //*/
+    //printf("%.2f %d %.2f %d %d %d\n", fit_pop / (PMAX * 1.0), n_100, (n_100 == 0) ? 0 : (fit_100 / (n_100 * 1.0)), n_0, n_1, melhor);
+
     return 0;   
 }
