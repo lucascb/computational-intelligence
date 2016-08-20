@@ -18,13 +18,13 @@
 /*          Formato do gene 
     indice|0|1|2|3|4|5|6|7|8|9|
     letra |S|E|N|D|M|O|R|Y|-|-|     */
-struct individuo { 
+struct ind { 
     int gene[10]; 
     int fit; 
 };
 
 /* Retorna o fitness do individuo */  
-int fitness(individuo i) {  
+int fitness(ind i) {  
     int send  = (1000*i.gene[0]) + (100*i.gene[1]) + (10*i.gene[2]) + i.gene[3];
     int more  = (1000*i.gene[4]) + (100*i.gene[5]) + (10*i.gene[6]) + i.gene[1];
     int money = (10000*i.gene[4]) + (1000*i.gene[5]) + (100*i.gene[2]) +
@@ -33,7 +33,7 @@ int fitness(individuo i) {
 }
 
 /* Verdade se o individuo 'a' for mais apto que 'b', falso caso contrario */
-bool mais_apto(individuo a, individuo b) {
+bool mais_apto(ind a, ind b) {
     return a.fit < b.fit;
 }
 
@@ -67,7 +67,7 @@ individuo gera_individuo(void) {
 }
 
 /* Faz torneio de 3 e retorna o individuo mais apto da populacao */
-individuo torneio(individuo pop[]) {    
+individuo torneio(ind pop[]) {    
     int melhor_ind;
     // Seleciona 3 individuos aleatorios da populacao
     int i1 = rand() % PMAX;
@@ -92,7 +92,7 @@ individuo torneio(individuo pop[]) {
 }
 
 /* Reliza o crossover ciclico entre ind1 e ind2 e retorna dois novos individuos */
-void crossover(individuo ind1, individuo ind2, individuo filhos[]) {
+void crossover(ind i1, ind i2, ind filhos[]) {
     int i, pt_cross;
     bool flag = true;
     
@@ -101,11 +101,11 @@ void crossover(individuo ind1, individuo ind2, individuo filhos[]) {
     // Repete enquanto existir pts de crossover
     while (flag) {
         // Troca os valores dos genes no pt de crossover
-        std::swap(ind1.gene[pt_cross], ind2.gene[pt_cross]);
+        std::swap(i1.gene[pt_cross], i2.gene[pt_cross]);
         // Procura o proximo pt de crossover (onde ha repeticao do valor)
         flag = false;
         for (i = 0; i < 10; i++) {
-            if (i != pt_cross && ind1.gene[i] == ind1.gene[pt_cross]) {
+            if (i != pt_cross && i1.gene[i] == i1.gene[pt_cross]) {
                 pt_cross = i;
                 flag = true;
                 break;
@@ -113,15 +113,15 @@ void crossover(individuo ind1, individuo ind2, individuo filhos[]) {
         }
     }
     // Calcula o fitness dos individuos resultantes
-    ind1.fit = fitness(ind1);
-    ind2.fit = fitness(ind2);
+    i1.fit = fitness(i1);
+    i2.fit = fitness(i2);
     // Salva os individuos resultantes
-    filhos[0] = ind1;
-    filhos[1] = ind2;
+    filhos[0] = i1;
+    filhos[1] = i2;
 }
 
 /* Recebe um individuo i e retorna o individuo mutacionado */
-void mutaciona(individuo* i) {
+void mutaciona(ind* i) {
     // Gera dois pontos diferentes de mutacao aleatorios
     int pt_mut1 = rand() % 10;
     int pt_mut2 = rand() % 10;
@@ -134,7 +134,7 @@ void mutaciona(individuo* i) {
 }
 
 int main(int argc, char *argv[]) {
-    individuo pop[PMAX], filhos[PCROSS], ger[PMAX+PCROSS], ind1, ind2, result[2];
+    ind pop[PMAX], filhos[PCROSS], ger[PMAX+PCROSS], ind1, ind2, result[2];
     int i;
     //*
     int fit_pop = 0, n_0 = 0, n_1 = 0, n_100 = 0, fit_100 = 0, melhor; 
