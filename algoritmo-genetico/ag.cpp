@@ -133,49 +133,56 @@ void mutaciona(ind* i) {
 	i->fit = fitness(*i);
 }
 
+/* Analisa e tira estatisticas da populacao */
+void analisa_populacao(ind pop[], double result[]) {
+	int fit_pop, n_0, n_1, n_100, fit_100, melhor_ind;
+
+	fit_pop = n_0 = n_1 = n_100 = fit_100 = melhor_ind = 0;
+	for (int i = 0; i < PMAX; i++) {
+		// Pega o melhor individuo
+		if (mais_apto(pop[i], pop[melhor_ind]))
+			melhor_ind = i;
+		// Conta quantos individuos possuem valor 0 ou 1 na letra M
+		if      (pop[i].gene[4] == 0) n_0++;
+		else if (pop[i].gene[4] == 1) n_1++;
+		// Verifica quantos individuos possuem fitness abaixo de 100
+		if (pop[i].fit <= 100) {
+			fit_100 += pop[i].fit;
+			n_100++;
+		}
+		// Pega a media dos fitness da populacao
+		fit_pop += pop[i].fit;
+	}
+	// Salva os resultados
+	result[0] = (fit_pop / (PMAX * 1.0));						// Media fitness
+	result[1] = pop[melhor_ind].fit * 1.0;						// Melhor fitness
+	result[2] = n_100 * 1.0;									// Nro de ind < 100
+	result[3] = ((n_100 != 0) ? (fit_100 / (n_100 * 1.0)) : 0); // Media ind < 100
+	result[4] = n_0 * 1.0;										// Nro de ind M = 0
+	result[5] = n_1 * 1.0;										// Nro de ind M = 1
+	/* Mostra os resultados
+	printf("Media fitness: \t\t%.2f\n", fit_pop / (PMAX * 1.0));
+	printf("Melhor fitness: \t%d\n", pop[melhor_ind].fit);
+	printf("Nro de ind < 100: \t%d\n", n_100);
+	printf("Media ind < 100: \t%.2f\n", (n_100 != 0) ? (fit_100 / (n_100 * 1.0)) : 0);
+	printf("Nro de ind com M = 0: \t%d\n", n_0);
+	printf("Nro de ind com M = 1: \t%d\n", n_1);
+	//*/
+}
+
 int main(int argc, char *argv[]) {
 	ind pop[PMAX], filhos[PCROSS], ger[PMAX+PCROSS], ind1, ind2, result[2];
 	int i;
-	//* Variaveis para teste
-	int fit_pop = 0, n_0 = 0, n_1 = 0, n_100 = 0, fit_100 = 0, melhor;
-	int _fit_popA = 0, _n_0A = 0, _n_1A = 0, _n_100A = 0, _fit_100A = 0, _melhorA = 0;
-	int _fit_popB = 0, _n_0B = 0, _n_1B = 0, _n_100B = 0, _fit_100B = 0, _melhorB = 0;
-	//*/
+	double medias_inicial[50][6], medias_final[50][6];
 
 	srand(time(NULL));
-	for (int c = 0; c < 100; c++) {
+	for (int c = 0; c < 50; c++) {
 		// Gera 100 individuos aleatorios para a populacao inicial
 		for (i = 0; i < PMAX; i++) {
 			pop[i] = gera_individuo();
-			//*
-			fit_pop += pop[i].fit;
-			if (pop[i].gene[4] == 0)      n_0++;
-			else if (pop[i].gene[4] == 1) n_1++;
-			if (pop[i].fit <= 100) {
-				n_100++;
-				fit_100 += pop[i].fit;
-			}
-			if (i == 0 || pop[i].fit < melhor) melhor = pop[i].fit;
-			//*/
 		}
-		//*
-		_fit_popA += (fit_pop / (PMAX * 1.0));
-		_n_0A += n_0;
-		_n_1A += n_1;
-		_n_100A += n_100;
-		_fit_100A += ((n_100 == 0) ? 0 : (fit_100 / (n_100 * 1.0)));
-		_melhorA += melhor;
-		//*/
-		/* Testes
-		printf("Populacao inicial\n");
-		printf("Media: %.2f\n", fit_pop / (PMAX * 1.0));
-		printf("Nro de ind < 100: %d\n", n_100);
-		printf("Media dos ind < 100: %.2f\n", (n_100 == 0) ? 0 : (fit_100 / (n_100 * 1.0)));
-		printf("Nro de ind com M = 0: %d\n", n_0);
-		printf("Nro de ind com M = 1: %d\n", n_1);
-		printf("Melhor individuo: %d\n", melhor);
-		//*/
-		//printf("%.2f %d %.2f %d %d %d ", fit_pop / (PMAX * 1.0), n_100, (n_100 == 0) ? 0 : (fit_100 / (n_100 * 1.0)), n_0, n_1, melhor);
+		//printf("\tPopulacao inicial\n\n");
+		analisa_populacao(pop, medias_inicial[c]);
 
 		// Seleciona PCROSS individuos aleatorios para o crossover
 		for (i = 0; i < PCROSS; i += 2) {
@@ -198,58 +205,49 @@ int main(int argc, char *argv[]) {
 
 		// Ordena os individuos e pega os PMAX melhores
 		std::sort(ger, ger+PMAX+PCROSS, mais_apto);
-		fit_pop = 0, n_0 = 0, n_1 = 0, n_100 = 0, fit_100 = 0;
 		for (i = 0; i < PMAX; i++) {
 			pop[i] = ger[i];
-			//printf("%d\n", pop[i].fit);
-			//*
-			fit_pop += pop[i].fit;
-			if (pop[i].gene[4] == 0)      n_0++;
-			else if (pop[i].gene[4] == 1) n_1++;
-			if (pop[i].fit <= 100) {
-				n_100++;
-				fit_100 += pop[i].fit;
-			}
-			if (i == 0 || pop[i].fit < melhor) melhor = pop[i].fit;
-			//*/
 		}
-		//*
-		_fit_popB += (fit_pop / (PMAX * 1.0));
-		_n_0B += n_0;
-		_n_1B += n_1;
-		_n_100B += n_100;
-		_fit_100B += ((n_100 == 0) ? 0 : (fit_100 / (n_100 * 1.0)));
-		_melhorB += melhor;
-		//*/
-		/* Testes
-		printf("\nPopulacao gerada\n");
-		printf("Media: %.2f\n", fit_pop / (PMAX * 1.0));
-		printf("Nro de ind < 100: %d\n", n_100);
-		printf("Media dos ind < 100: %.2f\n", (n_100 == 0) ? 0 : (fit_100 / (n_100 * 1.0)));
-		printf("Nro de ind com M = 0: %d\n", n_0);
-		printf("Nro de ind com M = 1: %d\n", n_1);
-		printf("Melhor individuo: %d\n", melhor);
-		//*/
-		//printf("%.2f %d %.2f %d %d %d\n", fit_pop / (PMAX * 1.0), n_100, (n_100 == 0) ? 0 : (fit_100 / (n_100 * 1.0)), n_0, n_1, melhor);
+		//printf("\n\tPopulacao gerada\n\n");
+		analisa_populacao(pop, medias_final[c]);
 	}
 
-	//* Testes
-	printf("\tMedia Populacao inicial\n\n");
-	printf("Media fitness: \t\t%.2f\n", 	 _fit_popA / 100.0);
-	printf("Nro de ind < 100: \t%.2f\n", 	 _n_100A   / 100.0);
-	printf("Media dos ind < 100: \t%.2f\n",  _fit_100A / 100.0);
-	printf("Nro de ind com M = 0: \t%.2f\n", _n_0A     / 100.0);
-	printf("Nro de ind com M = 1: \t%.2f\n", _n_1A     / 100.0);
-	printf("Melhor individuo: \t%.2f\n", 	 _melhorA  / 100.0);
-	//*/
+	double fit_pop_in, n_0_in, n_1_in, n_100_in, fit_100_in, melhor_ind_in;
+	double fit_pop_fin, n_0_fin, n_1_fin, n_100_fin, fit_100_fin, melhor_ind_fin;
 
-	printf("\n\tMedia Populacao gerada\n\n");
-	printf("Media fitness: \t\t%.2f\n", 	 _fit_popB / 100.0);
-	printf("Nro de ind < 100: \t%.2f\n", 	 _n_100B   / 100.0);
-	printf("Media dos ind < 100: \t%.2f\n",  _fit_100B / 100.0);
-	printf("Nro de ind com M = 0: \t%.2f\n", _n_0B     / 100.0);
-	printf("Nro de ind com M = 1: \t%.2f\n", _n_1B     / 100.0);
-	printf("Melhor individuo: \t%.2f\n", 	 _melhorB  / 100.0);
+	fit_pop_in = n_0_in = n_1_in = n_100_in = fit_100_in = melhor_ind_in = 0;
+	fit_pop_fin = n_0_fin = n_1_fin = n_100_fin = fit_100_fin = melhor_ind_fin = 0;
+	for (int c = 0; c < 50; c++) {
+		// Medias populacao inicial
+		fit_pop_in    += medias_inicial[c][0];
+		melhor_ind_in += medias_inicial[c][1];
+		n_100_in 	  += medias_inicial[c][2];
+		fit_100_in    += medias_inicial[c][3];
+		n_0_in 		  += medias_inicial[c][4];
+		n_1_in 		  += medias_inicial[c][5];
+		// Medias populacao final
+		fit_pop_fin    += medias_final[c][0];
+		melhor_ind_fin += medias_final[c][1];
+		n_100_fin      += medias_final[c][2];
+		fit_100_fin    += medias_final[c][3];
+		n_0_fin        += medias_final[c][4];
+		n_1_fin        += medias_final[c][5];
+	}
+	printf("\tMedias populacao inicial\n\n");
+	printf("Media fitness: \t\t%.2lf\n",   fit_pop_in / 50.0);
+	printf("Melhor fitness: \t%.2lf\n", melhor_ind_in / 50.0);
+	printf("Nro de ind < 100: \t%.2lf\n", 	 n_100_in / 50.0);
+	printf("Media ind < 100: \t%.2lf\n", 	   n_0_in / 50.0);
+	printf("Nro de ind com M = 0: \t%.2lf\n",  n_0_in / 50.0);
+	printf("Nro de ind com M = 1: \t%.2lf\n",  n_1_in / 50.0);
+
+	printf("\n\tMedias populacao gerada\n\n");
+	printf("Media fitness: \t\t%.2lf\n",   fit_pop_fin / 50.0);
+	printf("Melhor fitness: \t%.2lf\n", melhor_ind_fin / 50.0);
+	printf("Nro de ind < 100: \t%.2lf\n",    n_100_fin / 50.0);
+	printf("Media ind < 100: \t%.2lf\n", 	   n_0_fin / 50.0);
+	printf("Nro de ind com M = 0: \t%.2lf\n",  n_0_fin / 50.0);
+	printf("Nro de ind com M = 1: \t%.2lf\n",  n_1_fin / 50.0);
 
 	return 0;
 }
