@@ -16,6 +16,8 @@
 #define PMUT	1   // Prob de mutacao
 #define NGEN 	10	// Nro de genes no individuo
 
+using namespace std;
+
 /*			Formato do gene
 	indice|0|1|2|3|4|5|6|7|8|9|
 	letra |S|E|N|D|M|O|R|Y|-|-|     */
@@ -101,7 +103,7 @@ void crossover(ind i1, ind i2, ind filhos[]) {
 	// Repete enquanto existir pts de crossover
 	while (flag) {
 		// Troca os valores dos genes no pt de crossover
-		std::swap(i1.gene[pt_cross], i2.gene[pt_cross]);
+		swap(i1.gene[pt_cross], i2.gene[pt_cross]);
 		// Procura o proximo pt de crossover (onde ha repeticao do valor)
 		flag = false;
 		for (i = 0; i < NGEN; i++) {
@@ -128,7 +130,7 @@ void mutaciona(ind* i) {
 	while (pt_mut1 == pt_mut2)
 		pt_mut2 = rand() % NGEN;
 	// Troca os valores dos genes do individuo nos pts sorteados
-	std::swap(i->gene[pt_mut1], i->gene[pt_mut2]);
+	swap(i->gene[pt_mut1], i->gene[pt_mut2]);
 	// Recalcula o fitness do individuo
 	i->fit = fitness(*i);
 }
@@ -204,7 +206,7 @@ int main(int argc, char *argv[]) {
 			ger[i] = filhos[i-PMAX];
 
 		// Ordena os individuos e pega os PMAX melhores
-		std::sort(ger, ger+PMAX+PCROSS, mais_apto);
+		sort(ger, ger+PMAX+PCROSS, mais_apto);
 		for (i = 0; i < PMAX; i++) {
 			pop[i] = ger[i];
 		}
