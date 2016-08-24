@@ -1,4 +1,5 @@
-all: ag.cpp
-	g++ ag.cpp -O2 -o ag
+all:
+	g++ ag.cpp genetico.cpp -lm -O2 -o ag
+
 clean:
-	rm ag
+	rm *o ag
