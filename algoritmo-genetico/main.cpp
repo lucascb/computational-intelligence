@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
 	int i, cont = 0;
 	//double medias_inicial[50][6], medias_final[50][6];
 
-	//time_t a = time();
+	time_t a = time(NULL);
 
 	//printf("%d\n", RAND_MAX);
 
@@ -26,13 +26,13 @@ int main(int argc, char *argv[]) {
 		//analisa_populacao(pop, medias_inicial[c]);
 
 		for (int g = 0; g < NGER; g++) {
-			//monta_roleta(pop);
+			monta_roleta(pop);
 			// Seleciona PCROSS individuos aleatorios para o crossover
 			for (i = PMAX; i < PMAX + PCROSS; i += 2) {
-				ind1 = torneio(pop);
-				ind2 = torneio(pop);
-				//ind1 = roleta(pop);
-				//ind2 = roleta(pop);
+				//ind1 = torneio(pop);
+				//ind2 = torneio(pop);
+				ind1 = roleta(pop);
+				ind2 = roleta(pop);
 				crossover_ciclico(ind1, ind2, result);
 				pop[i]   = result[0];
 				pop[i+1] = result[1];
@@ -53,9 +53,9 @@ int main(int argc, char *argv[]) {
 		//printf("Resultado fit: %d\n", pop[0].fit);
 		if (pop[0].fit == 0) cont++;
 	}
-	//time_t b = time(NULL);
+	time_t b = time(NULL);
 	printf("Taxa de convergencia: %.2f%%\n", (cont / 1000.0) * 100);
-	//printf("Tempo: %lf\n", difftime(b, a));
+	printf("Tempo de execucao: %lds\n", b - a);
 	/* Testes
 	double fit_pop_in, n_0_in, n_1_in, n_100_in, fit_100_in, melhor_ind_in;
 	double fit_pop_fin, n_0_fin, n_1_fin, n_100_fin, fit_100_fin, melhor_ind_fin;
