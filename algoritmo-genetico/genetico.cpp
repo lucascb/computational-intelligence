@@ -23,12 +23,12 @@ int fitness(ind i) {
 	int more  = (1000*i.gene[4]) + (100*i.gene[5]) + (10*i.gene[6]) + i.gene[1];
 	int money = (10000*i.gene[4]) + (1000*i.gene[5]) + (100*i.gene[2]) +
                     (10*i.gene[1]) + i.gene[7];
-	return abs(money - (send + more));
+	return 100000 - abs(money - (send + more));
 }
 
 /* Verdade se o individuo 'a' for mais apto que 'b', falso caso contrario */
 bool mais_apto(ind a, ind b) {
-	return a.fit < b.fit;
+	return a.fit > b.fit;
 }
 
 /* Gera um individuo aleatorio */

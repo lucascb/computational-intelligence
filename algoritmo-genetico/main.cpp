@@ -9,12 +9,11 @@
 
 int main(int argc, char *argv[]) {
 	ind pop[PMAX+PCROSS], ind1, ind2, result[2];
-	int i, cont = 0;
+	int i, ger, cont = 0;
 	//double medias_inicial[50][6], medias_final[50][6];
-
-	time_t a = time(NULL);
-
 	//printf("%d\n", RAND_MAX);
+
+	clock_t start = clock();
 
 	srand(time(NULL));
 	for (int c = 0; c < 1000; c++) {
@@ -25,7 +24,7 @@ int main(int argc, char *argv[]) {
 		//printf("\tPopulacao inicial\n\n");
 		//analisa_populacao(pop, medias_inicial[c]);
 
-		for (int g = 0; g < NGER; g++) {
+		for (ger = 0; ger < NGER; ger++) {
 			monta_roleta(pop);
 			// Seleciona PCROSS individuos aleatorios para o crossover
 			for (i = PMAX; i < PMAX + PCROSS; i += 2) {
@@ -48,14 +47,14 @@ int main(int argc, char *argv[]) {
 			std::sort(pop, pop+PMAX+PCROSS, mais_apto);
 			//printf("\n\tPopulacao gerada\n\n");
 			//analisa_populacao(pop, medias_final[c]);
-			if (pop[0].fit == 0) break;
+			if (pop[0].fit == 100000) break;
 		}
 		//printf("Resultado fit: %d\n", pop[0].fit);
-		if (pop[0].fit == 0) cont++;
+		if (pop[0].fit == 100000) cont++;
 	}
-	time_t b = time(NULL);
+	clock_t end = clock();
 	printf("Taxa de convergencia: %.2f%%\n", (cont / 1000.0) * 100);
-	printf("Tempo de execucao: %lds\n", b - a);
+	printf("Tempo de execucao: %fs\n", (float) (end - start) / CLOCKS_PER_SEC);
 	/* Testes
 	double fit_pop_in, n_0_in, n_1_in, n_100_in, fit_100_in, melhor_ind_in;
 	double fit_pop_fin, n_0_fin, n_1_fin, n_100_fin, fit_100_fin, melhor_ind_fin;
