@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
 		//printf("\tPopulacao inicial\n\n");
 		//analisa_populacao(pop, medias_inicial[c]);
 
-		for (ger = 0; ger < NGER; ger++) {
+		for (ger = 0; !convergiu(pop) && ger < NGER; ger++) {
 			monta_roleta(pop);
 			// Seleciona PCROSS individuos aleatorios para o crossover
 			for (i = PMAX; i < PMAX + PCROSS; i += 2) {
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 			}
 
 			// Seleciona PMUT filhos aleatorios e os mutacionam
-			for (int m = 0; m < PMUT; m++) {
+			for (int m = 0; m < (PMUT / 100.0) * PMAX; m++) {
 				i = randrange(PMAX, PMAX+PCROSS);
 				mutaciona(&pop[i]);
 			}
@@ -47,7 +47,6 @@ int main(int argc, char *argv[]) {
 			std::sort(pop, pop+PMAX+PCROSS, mais_apto);
 			//printf("\n\tPopulacao gerada\n\n");
 			//analisa_populacao(pop, medias_final[c]);
-			if (pop[0].fit == 100000) break;
 		}
 		//printf("Resultado fit: %d\n", pop[0].fit);
 		if (pop[0].fit == 100000) cont++;

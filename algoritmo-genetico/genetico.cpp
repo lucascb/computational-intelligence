@@ -26,6 +26,11 @@ int fitness(ind i) {
 	return 100000 - abs(money - (send + more));
 }
 
+/* Verifica se uma dada populacao convergiu */
+bool convergiu(ind pop[]) {
+	return pop[0].fit == 100000;
+}
+
 /* Verdade se o individuo 'a' for mais apto que 'b', falso caso contrario */
 bool mais_apto(ind a, ind b) {
 	return a.fit > b.fit;
@@ -132,6 +137,10 @@ void crossover_ciclico(ind i1, ind i2, ind filhos[]) {
 	// Salva os individuos resultantes
 	filhos[0] = i1;
 	filhos[1] = i2;
+}
+
+void crossover_pmx(ind i1, ind i2, ind filhos[]) {
+	// Implementar
 }
 
 /* Recebe um individuo i e retorna o individuo mutacionado */
