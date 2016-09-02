@@ -140,7 +140,47 @@ void crossover_ciclico(ind i1, ind i2, ind filhos[]) {
 }
 
 void crossover_pmx(ind i1, ind i2, ind filhos[]) {
-	// Implementar
+	int troca[NGEN], pt_cross1, pt_cross2, i;
+	// Gera dois pontos de crossover aleatorios
+	pt_cross1 = randint(NGEN);
+	do { pt_cross2 = randint(NGEN); } while (pt_cross1 == pt_cross2);
+	if (pt_cross1 > pt_cross2) std::swap(pt_cross1, pt_cross2);
+	// Processa as trocas que deverao ser feitas
+	for (i = 0; i < NGEN; i++)
+		troca[i] = -1;
+	for (i = pt_cross1; i <= pt_cross2; i++) {
+		if (troca[i1.gene[i]] == -1)
+			troca[i1.gene[i]] = i2.gene[i];
+		else {
+			troca[i2.gene[i]] = troca[i1.gene[i]];
+			troca[troca[i1.gene[i]]] = i2.gene[i];
+			troca[i1.gene[i]] = -1;
+		}
+
+		if (troca[i2.gene[i]] == -1)
+			troca[i2.gene[i]] = i1.gene[i];
+		else {
+			troca[i1.gene[i]] = troca[i2.gene[i]];
+			troca[troca[i2.gene[i]]] = i1.gene[i];
+			troca[i2.gene[i]] = -1;
+		}
+		// Troca os valores dentro do intervalo de crossover
+		std::swap(i1.gene[i], i2.gene[i]);
+	}
+	for (i = 0; i < NGEN; i++) {
+		if (i < pt_cross1 || i > pt_cross2) {
+			if (troca[i1.gene[i]] != -1)
+				i1.gene[i] = troca[i1.gene[i]];
+			if (troca[i2.gene[i]] != -1)
+				i2.gene[i] = troca[i2.gene[i]];
+		}
+	}
+	// Calcula o fitness dos individuos resultantes
+	i1.fit = fitness(i1);
+	i2.fit = fitness(i2);
+	// Salva os individuos resultantes
+	filhos[0] = i1;
+	filhos[1] = i2;
 }
 
 /* Recebe um individuo i e retorna o individuo mutacionado */

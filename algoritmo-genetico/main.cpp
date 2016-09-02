@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 				//ind2 = torneio(pop);
 				ind1 = roleta(pop);
 				ind2 = roleta(pop);
-				crossover_ciclico(ind1, ind2, result);
+				crossover_pmx(ind1, ind2, result);
 				pop[i]   = result[0];
 				pop[i+1] = result[1];
 			}
