@@ -1,14 +1,21 @@
+/*      Algoritmo Genetico: Criptoaritmetica
+
+    S E N D
+    M O R E +
+  ---------
+  M O N E Y     */
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
 
 // Parametros do algoritmo
+#define NGEN 	10  // Nro de genes no individuo
 #define PMAX	100 // Nro maximo de individuos da populacao
 #define NGER	50  // Nro de geracoes
-#define PCROSS	60  // Qtde de filhos que serao gerados
-#define PMUT	1   // Prob de mutacao
-#define NGEN 	10  // Nro de genes no individuo
+#define PCROSS	80  // Qtde de filhos que serao gerados
+#define PMUT	5   // Prob de mutacao
+#define ELITE   20	// Porcentagem de elitismo
 
 /*			Formato do gene
 	indice|0|1|2|3|4|5|6|7|8|9|

@@ -139,13 +139,14 @@ void crossover_ciclico(ind i1, ind i2, ind filhos[]) {
 	filhos[1] = i2;
 }
 
+/* Realiza o crossover PMX entre i1 e i2 e retorna dois novos individuos */
 void crossover_pmx(ind i1, ind i2, ind filhos[]) {
 	int troca[NGEN], pt_cross1, pt_cross2, i;
 	// Gera dois pontos de crossover aleatorios
 	pt_cross1 = randint(NGEN);
 	do { pt_cross2 = randint(NGEN); } while (pt_cross1 == pt_cross2);
 	if (pt_cross1 > pt_cross2) std::swap(pt_cross1, pt_cross2);
-	// Processa as trocas que deverao ser feitas
+	// Processa as trocas que deverao ser feitas fora do intervalo
 	for (i = 0; i < NGEN; i++)
 		troca[i] = -1;
 	for (i = pt_cross1; i <= pt_cross2; i++) {
@@ -167,6 +168,7 @@ void crossover_pmx(ind i1, ind i2, ind filhos[]) {
 		// Troca os valores dentro do intervalo de crossover
 		std::swap(i1.gene[i], i2.gene[i]);
 	}
+	// Corrige os genes fora do intervalo com base no vetor de troca
 	for (i = 0; i < NGEN; i++) {
 		if (i < pt_cross1 || i > pt_cross2) {
 			if (troca[i1.gene[i]] != -1)
