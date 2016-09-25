@@ -18,7 +18,7 @@ int randrange(int min, int max) {
 }
 
 /* Retorna o fitness do individuo */
-int fitness(ind i) {
+int fitness(ind_t i) {
 	int send  = (1000*i.gene[0]) + (100*i.gene[1]) + (10*i.gene[2]) + i.gene[3];
 	int more  = (1000*i.gene[4]) + (100*i.gene[5]) + (10*i.gene[6]) + i.gene[1];
 	int money = (10000*i.gene[4]) + (1000*i.gene[5]) + (100*i.gene[2]) +
@@ -27,20 +27,20 @@ int fitness(ind i) {
 }
 
 /* Verifica se uma dada populacao convergiu */
-bool convergiu(ind pop[]) {
+bool convergiu(ind_t pop[]) {
 	return pop[0].fit == 100000;
 }
 
 /* Verdade se o individuo 'a' for mais apto que 'b', falso caso contrario */
-bool mais_apto(ind a, ind b) {
+bool mais_apto(ind_t a, ind_t b) {
 	return a.fit > b.fit;
 }
 
 /* Gera um individuo aleatorio */
-ind gera_individuo(void) {
+ind_t gera_individuo(void) {
 	int val, i, j;
 	bool found;
-	ind individuo;
+	ind_t individuo;
 
 	// Gera valores distintos para cada uma das oito letras
 	for (i = 0; i < NGEN; i++) {
@@ -65,7 +65,7 @@ ind gera_individuo(void) {
 }
 
 /* Faz torneio de 3 e retorna o individuo mais apto da populacao */
-ind torneio(ind pop[]) {
+ind_t torneio(ind_t pop[]) {
 	int melhor_ind;
 	// Seleciona 3 individuos aleatorios da populacao
 	int i1 = randint(PMAX);
@@ -89,7 +89,7 @@ ind torneio(ind pop[]) {
 }
 
 /* Monta a probabilidade de cada individuo baseado em sua aptidao */
-void monta_roleta(ind pop[]) {
+void monta_roleta(ind_t pop[]) {
 	int acc = 0;
 
 	for (int i = 0; i < PMAX; i++) {
@@ -99,7 +99,7 @@ void monta_roleta(ind pop[]) {
 }
 
 /* Faz o metodo da roleta para selecionar o individuo aleatorio mais apto */
-ind roleta(ind pop[]) {
+ind_t roleta(ind_t pop[]) {
 	// Sorteia um numero entre 1 e o maior id
 	int id_sorteado = randint(prob[PMAX-1]);
 	// Procura o individuo que possue o valor sorteado e o retorna
@@ -111,7 +111,7 @@ ind roleta(ind pop[]) {
 }
 
 /* Reliza o crossover ciclico entre i1 e i2 e retorna dois novos individuos */
-void crossover_ciclico(ind i1, ind i2, ind filhos[]) {
+void crossover_ciclico(ind_t i1, ind_t i2, ind_t filhos[]) {
 	int i, pt_cross;
 	bool flag = true;
 
@@ -140,8 +140,8 @@ void crossover_ciclico(ind i1, ind i2, ind filhos[]) {
 }
 
 /* Realiza o crossover PMX entre i1 e i2 e retorna dois novos individuos */
-void crossover_pmx(ind i1, ind i2, ind filhos[]) {
-	int troca[NGEN], pt_cross1, pt_cross2, i;
+void crossover_pmx(ind_t i1, ind_t i2, ind_t filhos[]) {
+	int troca[NGEN], pt_cross1, pt_cross2, i, j, aux;
 	// Gera dois pontos de crossover aleatorios
 	pt_cross1 = randint(NGEN);
 	do { pt_cross2 = randint(NGEN); } while (pt_cross1 == pt_cross2);
@@ -150,23 +150,33 @@ void crossover_pmx(ind i1, ind i2, ind filhos[]) {
 	for (i = 0; i < NGEN; i++)
 		troca[i] = -1;
 	for (i = pt_cross1; i <= pt_cross2; i++) {
-		if (troca[i1.gene[i]] == -1)
+		if (i1.gene[i] != i2.gene[i]) {
 			troca[i1.gene[i]] = i2.gene[i];
-		else {
-			troca[i2.gene[i]] = troca[i1.gene[i]];
-			troca[troca[i1.gene[i]]] = i2.gene[i];
-			troca[i1.gene[i]] = -1;
+			// Troca os valores dentro do intervalo de crossover
+			std::swap(i1.gene[i], i2.gene[i]);
 		}
-
-		if (troca[i2.gene[i]] == -1)
-			troca[i2.gene[i]] = i1.gene[i];
-		else {
-			troca[i1.gene[i]] = troca[i2.gene[i]];
-			troca[troca[i2.gene[i]]] = i1.gene[i];
-			troca[i2.gene[i]] = -1;
+	}
+	// Caso o ciclo seja o gene inteiro nao eh necessario ajustar
+	if (pt_cross1 != 0 || pt_cross2 != 9) {
+		// Corrige os ciclos
+		for (i = 0; i < NGEN; i++) {
+			if (troca[i] != -1 && troca[troca[i]] != -1) {
+				j = i;
+				while (troca[troca[j]] != -1) {
+					aux = troca[j];
+					troca[j] = -1;
+					j = aux;
+				}
+				troca[i] = troca[j];
+				troca[j] = -1;
+				//troca[troca[j]] = i;
+			}
 		}
-		// Troca os valores dentro do intervalo de crossover
-		std::swap(i1.gene[i], i2.gene[i]);
+		for (i = 0; i < NGEN; i++) {
+			if (troca[i] != -1 && troca[troca[i]] == -1) {
+				troca[troca[i]] = i;
+			}
+		}
 	}
 	// Corrige os genes fora do intervalo com base no vetor de troca
 	for (i = 0; i < NGEN; i++) {
@@ -186,7 +196,7 @@ void crossover_pmx(ind i1, ind i2, ind filhos[]) {
 }
 
 /* Recebe um individuo i e retorna o individuo mutacionado */
-void mutaciona(ind* i) {
+void mutaciona(ind_t* i) {
 	int pt_mut1, pt_mut2;
 
 	// Gera dois pontos diferentes de mutacao aleatorios
@@ -196,63 +206,4 @@ void mutaciona(ind* i) {
 	std::swap(i->gene[pt_mut1], i->gene[pt_mut2]);
 	// Recalcula o fitness do individuo
 	i->fit = fitness(*i);
-}
-
-/* Analisa e mostra na tela as estatisticas da populacao */
-void analisa_populacao(ind pop[]) {
-    int fit_pop, n_0, n_1, n_100, fit_100, melhor_ind;
-
-	fit_pop = n_0 = n_1 = n_100 = fit_100 = melhor_ind = 0;
-	for (int i = 0; i < PMAX; i++) {
-		// Pega o melhor individuo
-		if (mais_apto(pop[i], pop[melhor_ind]))
-			melhor_ind = i;
-		// Conta quantos individuos possuem valor 0 ou 1 na letra M
-		if      (pop[i].gene[4] == 0) n_0++;
-		else if (pop[i].gene[4] == 1) n_1++;
-		// Verifica quantos individuos possuem fitness abaixo de 100
-		if (pop[i].fit <= 100) {
-			fit_100 += pop[i].fit;
-			n_100++;
-		}
-		// Pega a media dos fitness da populacao
-		fit_pop += pop[i].fit;
-	}
-
-    // Mostra os resultados
-    printf("Media fitness: \t\t%.2f\n", fit_pop / (PMAX * 1.0));
-    printf("Melhor fitness: \t%d\n", pop[melhor_ind].fit);
-    printf("Nro de ind < 100: \t%d\n", n_100);
-    printf("Media ind < 100: \t%.2f\n", (n_100 != 0) ? (fit_100 / (n_100 * 1.0)) : 0);
-    printf("Nro de ind com M = 0: \t%d\n", n_0);
-    printf("Nro de ind com M = 1: \t%d\n", n_1);
-}
-
-/* Analisa e salva as estatisticas da populacao em result */
-void analisa_populacao(ind pop[], double result[]) {
-	int fit_pop, n_0, n_1, n_100, fit_100, melhor_ind;
-
-	fit_pop = n_0 = n_1 = n_100 = fit_100 = melhor_ind = 0;
-	for (int i = 0; i < PMAX; i++) {
-		// Pega o melhor individuo
-		if (mais_apto(pop[i], pop[melhor_ind]))
-			melhor_ind = i;
-		// Conta quantos individuos possuem valor 0 ou 1 na letra M
-		if      (pop[i].gene[4] == 0) n_0++;
-		else if (pop[i].gene[4] == 1) n_1++;
-		// Verifica quantos individuos possuem fitness abaixo de 100
-		if (pop[i].fit <= 100) {
-			fit_100 += pop[i].fit;
-			n_100++;
-		}
-		// Pega a media dos fitness da populacao
-		fit_pop += pop[i].fit;
-	}
-	// Salva os resultados
-	result[0] = (fit_pop / (PMAX * 1.0));						// Media fitness
-	result[1] = pop[melhor_ind].fit * 1.0;						// Melhor fitness
-	result[2] = n_100 * 1.0;									// Nro de ind < 100
-	result[3] = ((n_100 != 0) ? (fit_100 / (n_100 * 1.0)) : 0); // Media ind < 100
-	result[4] = n_0 * 1.0;										// Nro de ind M = 0
-	result[5] = n_1 * 1.0;										// Nro de ind M = 1
 }

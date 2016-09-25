@@ -1,7 +1,7 @@
 #include "genetico.h"
 
 int main(int argc, char *argv[]) {
-	ind pop[PMAX+PCROSS], filhos[PCROSS], ind1, ind2, result[2];
+	ind_t pop[PMAX+PCROSS], filhos[PCROSS], ind1, ind2, result[2];
 	int i, ger, cont = 0;
 	//double medias_inicial[50][6], medias_final[50][6];
 	//printf("%d\n", RAND_MAX);
@@ -18,17 +18,23 @@ int main(int argc, char *argv[]) {
 		//analisa_populacao(pop, medias_inicial[c]);
 
 		for (ger = 0; !convergiu(pop) && ger < NGER; ger++) {
-			//monta_roleta(pop);
+			monta_roleta(pop);
 			// Seleciona PCROSS individuos aleatorios para o crossover
 			for (i = 0; i < PCROSS; i += 2) {
-				ind1 = torneio(pop);
-				ind2 = torneio(pop);
-				//ind1 = roleta(pop);
-				//ind2 = roleta(pop);
-				crossover_ciclico(ind1, ind2, result);
-				//crossover_pmx(ind1, ind2, result);
+				//ind1 = torneio(pop);
+				//ind2 = torneio(pop);
+				ind1 = roleta(pop);
+				ind2 = roleta(pop);
+				//crossover_ciclico(ind1, ind2, result);
+				crossover_pmx(ind1, ind2, result);
 				filhos[i]   = result[0];
 				filhos[i+1] = result[1];
+				//* Testes
+				if (!valido(filhos[i]) || !valido(filhos[i+1])) {
+					printf("*** Filho invalido ***\n");
+					return 0;
+				}
+				//*/
 			}
 
 			// Seleciona PMUT filhos aleatorios e os mutacionam
@@ -37,13 +43,13 @@ int main(int argc, char *argv[]) {
 				mutaciona(&filhos[i]);
 			}
 
-			/* Reinsercao Ordenada: Ordena os individuos e pega os PMAX melhores
+			//* Reinsercao Ordenada: Ordena os individuos e pega os PMAX melhores
 			for (i = 0; i < PCROSS; i++)
 				pop[i+PMAX] = filhos[i];
 			std::sort(pop, pop+PMAX+PCROSS, mais_apto);
 			//*/
 
-			//* Elitismo: Mantem uma porcentagem dos melhores pais na populacao
+			/* Elitismo: Mantem uma porcentagem dos melhores pais na populacao
 			std::sort(pop, pop+PMAX, mais_apto);
             for (i = 0; i < PCROSS; i++)
                 pop[i+ELITE] = filhos[i];
