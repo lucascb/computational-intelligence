@@ -1,14 +1,19 @@
 #include "genetico.h"
 
+int nfilhos = (PCROSS / 100.0) * PMAX;
+int nmut    = (PMUT   / 100.0) * PMAX;
+int elite   = (ELITE  / 100.0) * PMAX;
+
 int main(int argc, char *argv[]) {
-	ind_t pop[PMAX+PCROSS], filhos[PCROSS], ind1, ind2, result[2];
-	int i, ger, cont = 0;
+	ind_t pop[PMAX+nfilhos], filhos[nfilhos], ind1, ind2, result[2];
+	int i, ger, cont;
 	//double medias_inicial[50][6], medias_final[50][6];
 	//printf("%d\n", RAND_MAX);
 
 	clock_t start = clock();
 	srand(time(NULL));
 
+	cont = 0;
 	for (int c = 0; c < 1000; c++) {
 		// Gera PMAX individuos aleatorios para a populacao inicial
 		for (i = 0; i < PMAX; i++) {
@@ -19,8 +24,8 @@ int main(int argc, char *argv[]) {
 
 		for (ger = 0; !convergiu(pop) && ger < NGER; ger++) {
 			monta_roleta(pop);
-			// Seleciona PCROSS individuos aleatorios para o crossover
-			for (i = 0; i < PCROSS; i += 2) {
+			// Seleciona nfilhos individuos aleatorios para o crossover
+			for (i = 0; i < nfilhos; i += 2) {
 				//ind1 = torneio(pop);
 				//ind2 = torneio(pop);
 				ind1 = roleta(pop);
@@ -29,7 +34,7 @@ int main(int argc, char *argv[]) {
 				crossover_pmx(ind1, ind2, result);
 				filhos[i]   = result[0];
 				filhos[i+1] = result[1];
-				//* Testes
+				/* Testes
 				if (!valido(filhos[i]) || !valido(filhos[i+1])) {
 					printf("*** Filho invalido ***\n");
 					return 0;
@@ -38,21 +43,21 @@ int main(int argc, char *argv[]) {
 			}
 
 			// Seleciona PMUT filhos aleatorios e os mutacionam
-			for (int m = 0; m < (PMUT / 100.0) * PMAX; m++) {
+			for (int m = 0; m < nmut; m++) {
 				i = randint(PCROSS);
 				mutaciona(&filhos[i]);
 			}
 
-			//* Reinsercao Ordenada: Ordena os individuos e pega os PMAX melhores
-			for (i = 0; i < PCROSS; i++)
+			/* Reinsercao Ordenada: Ordena os individuos e pega os PMAX melhores
+			for (i = 0; i < nfilhos; i++)
 				pop[i+PMAX] = filhos[i];
-			std::sort(pop, pop+PMAX+PCROSS, mais_apto);
+			std::sort(pop, pop+PMAX+nfilhos, mais_apto);
 			//*/
 
-			/* Elitismo: Mantem uma porcentagem dos melhores pais na populacao
+			//* Elitismo: Mantem uma porcentagem dos melhores pais na populacao
 			std::sort(pop, pop+PMAX, mais_apto);
-            for (i = 0; i < PCROSS; i++)
-                pop[i+ELITE] = filhos[i];
+            for (i = 0; i < nfilhos; i++)
+                pop[i + elite] = filhos[i];
 			//*/
 
 			//printf("\n\tPopulacao gerada\n\n");

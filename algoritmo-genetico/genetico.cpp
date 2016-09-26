@@ -17,7 +17,10 @@ int randrange(int min, int max) {
 	return (x % (max - min)) + min;
 }
 
-/* Retorna o fitness do individuo */
+//* Retorna o fitness do individuo para o problema SEND+MORE=MONEY
+// 			Formato do gene
+//	indice|0|1|2|3|4|5|6|7|8|9|
+//	letra |S|E|N|D|M|O|R|Y|-|-|
 int fitness(ind_t i) {
 	int send  = (1000*i.gene[0]) + (100*i.gene[1]) + (10*i.gene[2]) + i.gene[3];
 	int more  = (1000*i.gene[4]) + (100*i.gene[5]) + (10*i.gene[6]) + i.gene[1];
@@ -25,6 +28,63 @@ int fitness(ind_t i) {
                     (10*i.gene[1]) + i.gene[7];
 	return 100000 - abs(money - (send + more));
 }
+//*/
+
+/* Retorna o fitness do individuo para o problema EAT+THAT=APPLE
+//			Formato do gene
+//	indice|0|1|2|3|4|5|6|7|8|9|
+//  letra |E|A|T|H|P|L|-|-|-|-|
+int fitness(ind_t i) {
+	int eat   = (100*i.gene[0]) + (10*i.gene[1]) + i.gene[2];
+	int that  = (1000*i.gene[2]) + (100*i.gene[3]) + (10*i.gene[1]) + i.gene[2];
+	int apple = (10000*i.gene[1]) + (1000*i.gene[4]) + (100*i.gene[4]) +
+                    (10*i.gene[5]) + i.gene[0];
+	return 100000 - abs(apple - (eat + that));
+}
+//*/
+
+/* Retorna o fitness do individuo para o problema CROSS+ROADS=DANGER
+//			Formato do gene
+//	indice|0|1|2|3|4|5|6|7|8|9|
+//	letra |C|R|O|S|A|D|N|G|E|-|
+int fitness(ind_t i) {
+	int cross  = (10000*i.gene[0]) + (1000*i.gene[1]) + (100*i.gene[2]) +
+		(10*i.gene[3]) + i.gene[3];
+	int roads  = (10000*i.gene[1]) + (1000*i.gene[2]) + (100*i.gene[4]) +
+		(10*i.gene[5]) + i.gene[3];
+	int danger = (100000*i.gene[5]) + (10000*i.gene[4]) + (1000*i.gene[6]) +
+		(100*i.gene[7]) + (10*i.gene[8]) + i.gene[1];
+	return 10000000 - abs(danger - (cross + roads));
+}
+//*/
+
+/* Retorna o fitness do individuo para o problema COCA+COLA=OASIS
+//			Formato do gene
+//	indice|0|1|2|3|4|5|6|7|8|9|
+//	letra |C|O|A|L|S|I|-|-|-|-|
+int fitness(ind_t i) {
+	int coca  = (1000*i.gene[0]) + (100*i.gene[1]) + (10*i.gene[0]) + i.gene[2];
+	int cola  = (1000*i.gene[0]) + (100*i.gene[1]) + (10*i.gene[3]) + i.gene[2];
+	int oasis = (10000*i.gene[1]) + (1000*i.gene[2]) + (100*i.gene[4]) +
+                    (10*i.gene[5]) + i.gene[4];
+	return 100000 - abs(oasis - (coca + cola));
+}
+//*/
+
+/* Retorna o fitness do individuo para o problema DONALD+GERALD=ROBERT
+//			Formato do gene
+//	indice|0|1|2|3|4|5|6|7|8|9|
+//	letra |D|O|N|A|L|G|E|R|B|T|
+int fitness(ind_t i) {
+	int donald = (100000*i.gene[0]) + (10000*i.gene[1]) + (1000*i.gene[2]) +
+		(100*i.gene[3]) + (10*i.gene[4]) + i.gene[0];
+	int gerald = (100000*i.gene[5]) + (10000*i.gene[6]) + (1000*i.gene[7]) +
+		(100*i.gene[3]) + (10*i.gene[4]) + i.gene[0];
+	int robert = (100000*i.gene[7]) + (10000*i.gene[1]) + (1000*i.gene[8]) +
+		(100*i.gene[6]) + (10*i.gene[7]) + i.gene[9];
+	return 10000000 - abs(robert - (donald + gerald));
+}
+//*/
 
 /* Verifica se uma dada populacao convergiu */
 bool convergiu(ind_t pop[]) {

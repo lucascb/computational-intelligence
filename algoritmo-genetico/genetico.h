@@ -1,9 +1,9 @@
 /*      Algoritmo Genetico: Criptoaritmetica
  *
- *    S E N D
- *    M O R E +
- *  ---------
- *  M O N E Y
+ *    S E N D       E A T     C R O S S     C O C A     D O N A L D
+ *    M O R E +   T H A T +   R O A D S +   C O L A +   G E R A L D +
+ *  ---------    --------    ----------    --------    ------------
+ *  M O N E Y   A P P L E   D A N G E R   O A S I S     R O B E R T
  */
 #include <cstdio>
 #include <cstdlib>
@@ -14,14 +14,11 @@
 #define NGEN 	10  // Nro de genes no individuo
 #define PMAX	100 // Nro maximo de individuos da populacao
 #define NGER	50  // Nro de geracoes
-#define PCROSS	80  // Qtde de filhos que serao gerados
-#define PMUT	10   // Prob de mutacao
+#define PCROSS	80  // Porcentagem de filhos que serao gerados
+#define PMUT	10  // Prob de mutacao
 #define ELITE   20	// Porcentagem de elitismo
 
-/*			Formato do gene
- *	indice|0|1|2|3|4|5|6|7|8|9|
- *	letra |S|E|N|D|M|O|R|Y|-|-|
- */
+// Individuo
 struct ind_t {
 	int gene[NGEN];
 	int fit;
