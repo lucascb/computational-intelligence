@@ -1,58 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-""" Segundo trabalho de Inteligencia Computacional:
-        Rede Neural Artificial Perceptron   """
-
-from random import randrange
-
-# Funcao degrau
-step        = lambda x: 1 if x > 0 else 0
-# Produto escalar de dois vetores
-dot_product = lambda x, y: sum([i*j for i,j in zip(x, y)])
-
-class Neuron(object):
-    """ Implementa um neuronio de uma RNA """
-
-    def __init__(self, alpha=1, epochs=100, random=False):
-        self.alpha = alpha       # Taxa de aprendizagem
-        self.max_epochs = epochs # Qtde max de iteracoes do alg de treinamento
-        self.theta = -1          # Threshould
-        self.w = []              # Vetor de pesos
-        self.random_w = random   # Define se o vetor de pesos sera aleat ou nao
-
-    def fit(self, inputs, outputs):
-        """ Treina o neuronio para o conjunto de entradas e saidas """
-        if len(inputs) != len(outputs):
-            raise Exception("Inputs and ouputs length should be equal")
-        # Insere o bias nas entradas de treinamento
-        x = [i[:] for i in inputs]
-        for inpt in x:
-            inpt.insert(0, -self.theta)
-        # Cria o vetor de pesos inicial
-        if self.random_w:
-            self.w = [randrange(3)-1 for i in range(len(x[0]))]
-        else:
-            self.w = [0 for i in range(len(x[0]))]
-        # Inicializa as variaveis de controle
-        converged, epoch = False, 0
-        while not converged and epoch < self.max_epochs:
-            errors = [0 for i in range(len(x))]
-            # Para cada entrada de treinamento
-            for i in range(len(x)):
-                y = step(dot_product(self.w, x[i])) # y = f(W.Xi)
-                errors[i] = outputs[i] - y          # Ei = Di - y
-                for j in range(len(x[i])):
-                    self.w[j] += (self.alpha * errors[i] * x[i][j])
-            # Converge se todos os erros forem zero
-            converged = not any(errors)
-            epoch += 1
-        print("Epocas necessarias para treinar: " + str(epoch))
-        print(self.w)
-
-    def predict(self, x):
-        """ Testa o conhecimento do neuronio com base no vetor de pesos """
-        return step(dot_product(self.w[1:], x))
+from neuron import Neuron
 
 zero = [0, 1, 1, 1, 0,
         1, 0, 0, 0, 1,
@@ -97,11 +46,33 @@ five = [0, 1, 1, 1, 1,
         0, 1, 1, 1, 1]
 
 if __name__ == '__main__':
-    n = Neuron(random=True)
-    n.fit([zero, one], [0, 1])
-    print(n.predict(zero))
-    print(n.predict(one))
-    print(n.predict(two))
-    print(n.predict(three))
-    print(n.predict(four))
-    print(n.predict(five))
+    print("Neuronio Zero")
+    n0 = Neuron(random=True)
+    n0.fit([zero, one, two, three, four, five], [1, 0, 0, 0, 0, 0])
+    print(n0.predict(zero), n0.predict(one), n0.predict(two), n0.predict(three),
+        n0.predict(four), n0.predict(five))
+    print("Neuronio Um")
+    n1 = Neuron(random=True)
+    n1.fit([zero, one, two, three, four, five], [0, 1, 0, 0, 0, 0])
+    print(n1.predict(zero), n1.predict(one), n1.predict(two), n1.predict(three),
+        n1.predict(four), n1.predict(five))
+    print("Neuronio Dois")
+    n2 = Neuron(random=True)
+    n2.fit([zero, one, two, three, four, five], [0, 0, 1, 0, 0, 0])
+    print(n2.predict(zero), n2.predict(one), n2.predict(two), n2.predict(three),
+        n2.predict(four), n2.predict(five))
+    print("Neuronio Tres")
+    n3 = Neuron(random=True)
+    n3.fit([zero, one, two, three, four, five], [0, 0, 0, 1, 0, 0])
+    print(n3.predict(zero), n3.predict(one), n3.predict(two), n3.predict(three),
+        n3.predict(four), n3.predict(five))
+    print("Neuronio Quatro")
+    n4 = Neuron(random=True)
+    n4.fit([zero, one, two, three, four, five], [0, 0, 0, 0, 1, 0])
+    print(n4.predict(zero), n4.predict(one), n4.predict(two), n4.predict(three),
+        n4.predict(four), n4.predict(five))
+    print("Neuronio Cinco")
+    n5 = Neuron(random=True)
+    n5.fit([zero, one, two, three, four, five], [0, 0, 0, 0, 0, 1])
+    print(n5.predict(zero), n5.predict(one), n5.predict(two), n5.predict(three),
+        n5.predict(four), n5.predict(five))
