@@ -11,13 +11,13 @@ step        = lambda x: 1 if x > 0 else 0
 # Produto escalar de dois vetores
 dot_product = lambda x, y: sum([i*j for i,j in zip(x, y)])
 
-class Neuron(object):
+class Neuronio(object):
     """ Implementa um neuronio de uma RNA Perceptron """
 
     def __init__(self, alpha=1, epochs=100, random=False):
         self.alpha = alpha       # Taxa de aprendizagem
         self.max_epochs = epochs # Qtde max de iteracoes do alg de treinamento
-        self.theta = -1          # Threshould
+        self.bias = 1            # Threshould
         self.w = []              # Vetor de pesos
         self.random_w = random   # Define se o vetor de pesos sera aleat ou nao
 
@@ -25,11 +25,7 @@ class Neuron(object):
         """ Treina o neuronio para o conjunto de entradas e saidas """
         if len(inputs) != len(outputs):
             raise Exception("Inputs and ouputs length should be equal")
-        # Insere o bias nas entradas de treinamento
-        x = [i[:] for i in inputs]
-        #for xi in x:
-        #    xi.insert(0, -self.theta)
-        input_size = len(x[0])
+        input_size = len(inputs[0])
         # Cria o vetor de pesos inicial
         if self.random_w:
             self.w = [randrange(-1, 2) for i in range(input_size)]
@@ -41,10 +37,10 @@ class Neuron(object):
             errors = [0 for i in range(len(inputs))]
             # Para cada entrada de treinamento
             for i in range(len(inputs)):
-                y = step(dot_product(self.w, x[i])) # y = f(W.Xi)
-                errors[i] = outputs[i] - y          # Ei = Di - y
-                for j in range(len(x[i])):
-                    self.w[j] += (self.alpha * errors[i] * x[i][j])
+                y = step(dot_product(self.w, inputs[i])) # y = f(W.Xi)
+                errors[i] = outputs[i] - y               # Ei = Di - y
+                for j in range(len(inputs[i])):
+                    self.w[j] += (self.alpha * errors[i] * inputs[i][j])
             # Converge se todos os erros forem zero
             #print(errors)
             converged = not any(errors)

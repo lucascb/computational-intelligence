@@ -17,7 +17,7 @@ int randrange(int min, int max) {
 	return (x % (max - min)) + min;
 }
 
-//* Retorna o fitness do individuo para o problema SEND+MORE=MONEY
+/* Retorna o fitness do individuo para o problema SEND+MORE=MONEY
 // 			Formato do gene
 //	indice|0|1|2|3|4|5|6|7|8|9|
 //	letra |S|E|N|D|M|O|R|Y|-|-|
@@ -26,7 +26,7 @@ int fitness(ind_t i) {
 	int more  = (1000*i.gene[4]) + (100*i.gene[5]) + (10*i.gene[6]) + i.gene[1];
 	int money = (10000*i.gene[4]) + (1000*i.gene[5]) + (100*i.gene[2]) +
                     (10*i.gene[1]) + i.gene[7];
-	return 100000 - abs(money - (send + more));
+	return 1000000 - abs(money - (send + more));
 }
 //*/
 
@@ -39,7 +39,7 @@ int fitness(ind_t i) {
 	int that  = (1000*i.gene[2]) + (100*i.gene[3]) + (10*i.gene[1]) + i.gene[2];
 	int apple = (10000*i.gene[1]) + (1000*i.gene[4]) + (100*i.gene[4]) +
                     (10*i.gene[5]) + i.gene[0];
-	return 100000 - abs(apple - (eat + that));
+	return 10000000 - abs(apple - (eat + that));
 }
 //*/
 
@@ -67,11 +67,11 @@ int fitness(ind_t i) {
 	int cola  = (1000*i.gene[0]) + (100*i.gene[1]) + (10*i.gene[3]) + i.gene[2];
 	int oasis = (10000*i.gene[1]) + (1000*i.gene[2]) + (100*i.gene[4]) +
                     (10*i.gene[5]) + i.gene[4];
-	return 100000 - abs(oasis - (coca + cola));
+	return 10000000 - abs(oasis - (coca + cola));
 }
 //*/
 
-/* Retorna o fitness do individuo para o problema DONALD+GERALD=ROBERT
+//* Retorna o fitness do individuo para o problema DONALD+GERALD=ROBERT
 //			Formato do gene
 //	indice|0|1|2|3|4|5|6|7|8|9|
 //	letra |D|O|N|A|L|G|E|R|B|T|
@@ -88,7 +88,7 @@ int fitness(ind_t i) {
 
 /* Verifica se uma dada populacao convergiu */
 bool convergiu(ind_t pop[]) {
-	return pop[0].fit == 100000;
+	return pop[0].fit == 10000000;
 }
 
 /* Verdade se o individuo 'a' for mais apto que 'b', falso caso contrario */
@@ -203,8 +203,10 @@ void crossover_ciclico(ind_t i1, ind_t i2, ind_t filhos[]) {
 void crossover_pmx(ind_t i1, ind_t i2, ind_t filhos[]) {
 	int troca[NGEN], pt_cross1, pt_cross2, i, j, aux;
 	// Gera dois pontos de crossover aleatorios
-	pt_cross1 = randint(NGEN);
-	do { pt_cross2 = randint(NGEN); } while (pt_cross1 == pt_cross2);
+	do {
+		pt_cross1 = randint(NGEN);
+		do { pt_cross2 = randint(NGEN); } while (pt_cross1 == pt_cross2);
+	} while (pt_cross1 == 0 && pt_cross2 == 9);
 	if (pt_cross1 > pt_cross2) std::swap(pt_cross1, pt_cross2);
 	// Processa as trocas que deverao ser feitas fora do intervalo
 	for (i = 0; i < NGEN; i++)
@@ -255,7 +257,7 @@ void crossover_pmx(ind_t i1, ind_t i2, ind_t filhos[]) {
 	filhos[1] = i2;
 }
 
-/* Recebe um individuo i e retorna o individuo mutacionado */
+//* Recebe um individuo i e retorna o individuo mutacionado
 void mutaciona(ind_t* i) {
 	int pt_mut1, pt_mut2;
 
@@ -267,3 +269,4 @@ void mutaciona(ind_t* i) {
 	// Recalcula o fitness do individuo
 	i->fit = fitness(*i);
 }
+//*/

@@ -15,10 +15,12 @@ int main(int argc, char *argv[]) {
 
 	cont = 0;
 	for (int c = 0; c < 1000; c++) {
-		// Gera PMAX individuos aleatorios para a populacao inicial
+		/* Gera PMAX individuos aleatorios para a populacao inicial
 		for (i = 0; i < PMAX; i++) {
 			pop[i] = gera_individuo();
 		}
+		//*/
+		povoar(pop);
 		//printf("\tPopulacao inicial\n\n");
 		//analisa_populacao(pop, medias_inicial[c]);
 
@@ -29,7 +31,7 @@ int main(int argc, char *argv[]) {
 				//ind1 = torneio(pop);
 				//ind2 = torneio(pop);
 				ind1 = roleta(pop);
-				ind2 = roleta(pop);
+				do { ind2 = roleta(pop); } while (igual(ind1, ind2));
 				//crossover_ciclico(ind1, ind2, result);
 				crossover_pmx(ind1, ind2, result);
 				filhos[i]   = result[0];
@@ -64,7 +66,10 @@ int main(int argc, char *argv[]) {
 			//analisa_populacao(pop, medias_final[c]);
 		}
 		//printf("Resultado fit: %d\n", pop[0].fit);
-		if (convergiu(pop)) cont++;
+		if (convergiu(pop)) {
+			//if (cont == 0) print(pop[0]);
+			cont++;
+		}
 	}
 
 	clock_t end = clock();

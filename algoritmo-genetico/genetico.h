@@ -12,10 +12,10 @@
 
 // Parametros do algoritmo
 #define NGEN 	10  // Nro de genes no individuo
-#define PMAX	100 // Nro maximo de individuos da populacao
-#define NGER	50  // Nro de geracoes
+#define PMAX	200 // Nro maximo de individuos da populacao
+#define NGER	100 // Nro de geracoes
 #define PCROSS	80  // Porcentagem de filhos que serao gerados
-#define PMUT	10  // Prob de mutacao
+#define PMUT	40  // Prob de mutacao
 #define ELITE   20	// Porcentagem de elitismo
 
 // Individuo
@@ -48,3 +48,7 @@ void print(ind_t i);
 bool valido(ind_t i);
 void analisa_populacao(ind_t pop[]);
 void analisa_populacao(ind_t pop[], double result[]);
+
+bool igual(ind_t a, ind_t b);
+bool existe(ind_t i, ind_t pop[]);
+void povoar(ind_t pop[]);
